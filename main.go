@@ -11,5 +11,6 @@ import (
 func main() {
 	command.Go(func(command command.BaseCommand) {
 		internal.RegisterCmd(command)
+		internal.RegisterWeb(command)
 	})
 }
