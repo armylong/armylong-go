@@ -1,5 +1,7 @@
 github.com/armylong/go-library v0.0.0-20260322103511-7c15c7398f78 h1:6GfuvYgdRYt9Q9e1E/FAgf6DbN0q1dg7nVZdeg6bN2Q=
 github.com/armylong/go-library v0.0.0-20260322103511-7c15c7398f78/go.mod h1:q8C1v+VA+9keLiWpcCRraemA/ySOFt0isPicFrTK0c0=
+github.com/armylong/go-library v0.0.0-20260325120231-697717701142 h1:w/X0t5WVArQhOUisqj8YP5WgrqRXE1aXcfqf3Q1GJTM=
+github.com/armylong/go-library v0.0.0-20260325120231-697717701142/go.mod h1:+sBU3Y8iSIW0jxhXPPQBS5CHoIV3EcfMaxT19ZJhJak=
 github.com/bsm/ginkgo/v2 v2.12.0 h1:Ny8MWAHyOepLGlLKYmXG4IEkioBysk6GpaRTLC8zwWs=
 github.com/bsm/ginkgo/v2 v2.12.0/go.mod h1:SwYbGRRDovPVboqFv0tPTcG1sN61LM1Z4ARdbAV9g4c=
 github.com/bsm/gomega v1.27.10 h1:yeMWxP2pV2fG3FgAODIY8EiRE3dy0aeFYt4l7wh6yKA=

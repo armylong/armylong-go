@@ -3,7 +3,7 @@ module github.com/armylong/armylong-go
 go 1.24.0
 
 require (
-	github.com/armylong/go-library v0.0.0-20260322103511-7c15c7398f78
+	github.com/armylong/go-library v0.0.0-20260325120231-697717701142
 	github.com/spf13/cast v1.10.0
 	github.com/spf13/cobra v1.10.2
 )
