@@ -55,7 +55,7 @@ func (b *yangfenBusiness) checkAndClearExpired(ctx context.Context, uid string) 
 	return nil
 }
 
-func (b *yangfenBusiness) Recharge(ctx context.Context, uid string, amount int) error {
+func (b *yangfenBusiness) Recharge(ctx context.Context, uid string, amount int, expireSec int64) error {
 	if amount <= 0 {
 		return fmt.Errorf("充值金额必须大于0")
 	}
@@ -67,7 +67,7 @@ func (b *yangfenBusiness) Recharge(ctx context.Context, uid string, amount int) 
 
 	webcache.RedisClient.Set(ctx, b.getBalanceKey(uid), strconv.Itoa(newBalance), 0)
 
-	expireTime := time.Now().Add(24 * time.Hour).Unix()
+	expireTime := time.Now().Add(time.Duration(expireSec) * time.Second).Unix()
 	webcache.RedisClient.Set(ctx, b.getExpireKey(uid), strconv.FormatInt(expireTime, 10), 0)
 
 	b.addTransaction(ctx, uid, "recharge", amount, newBalance, "充值")
@@ -189,4 +189,11 @@ func (b *yangfenBusiness) getTransaction(ctx context.Context, uid string, transa
 		}
 	}
 	return nil, fmt.Errorf("not found")
+}
+
+func (b *yangfenBusiness) ClearData(ctx context.Context, uid string) error {
+	webcache.RedisClient.Del(ctx, b.getBalanceKey(uid))
+	webcache.RedisClient.Del(ctx, b.getTransactionKey(uid))
+	webcache.RedisClient.Del(ctx, b.getExpireKey(uid))
+	return nil
 }

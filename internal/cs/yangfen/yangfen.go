@@ -11,7 +11,8 @@ type BalanceResponse struct {
 
 type RechargeRequest struct {
 	BaseRequest
-	Amount int `json:"amount" form:"amount"`
+	Amount    int   `json:"amount" form:"amount"`
+	ExpireSec int64 `json:"expire_sec" form:"expire_sec"`
 }
 
 type ConsumeRequest struct {

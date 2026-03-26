@@ -43,7 +43,7 @@ func (c *YangfenController) ActionRecharge(ctx *gin.Context, req *yangfen.Rechar
 		return nil, errors.New("充值金额必须大于0")
 	}
 
-	err := business.YangfenBusiness.Recharge(ctx, req.Uid, req.Amount)
+	err := business.YangfenBusiness.Recharge(ctx, req.Uid, req.Amount, req.ExpireSec)
 	if err != nil {
 		return nil, err
 	}
@@ -177,4 +177,20 @@ func convertTransactions(transactions []map[string]any) []yangfen.TransactionRec
 		result = append(result, record)
 	}
 	return result
+}
+
+func (c *YangfenController) ActionClearData(ctx *gin.Context, req *yangfen.BaseRequest) (*yangfen.CommonResponse, error) {
+	if err := c.checkUid(req.Uid); err != nil {
+		return nil, err
+	}
+
+	err := business.YangfenBusiness.ClearData(ctx, req.Uid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &yangfen.CommonResponse{
+		Success: true,
+		Message: "清除成功",
+	}, nil
 }
