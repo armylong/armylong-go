@@ -1,5 +1,5 @@
 package user
 
-type DemoResponse struct {
+type DemoMessage struct {
 	Message string `json:"message"`
 }
