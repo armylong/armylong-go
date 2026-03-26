@@ -20,7 +20,7 @@ func RegisterRouters(engine *gin.Engine) {
 	// 404 页面
 	engine.NoRoute(func(ctx *gin.Context) {
 		// 返回404
-		ctx.JSON(http.StatusNotFound, longgin.ErrorWithContext(ctx, errors.New("not found"), 404))
+		ctx.JSON(http.StatusNotFound, longgin.ErrorWithContext(ctx, errors.New("not found"), longgin.ErrorNotFound))
 	})
 
 	// 用户相关接口
