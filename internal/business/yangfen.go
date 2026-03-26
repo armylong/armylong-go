@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/armylong/armylong-go/internal/common/webcache"
+	"github.com/redis/go-redis/v9"
 )
 
 const (
@@ -81,13 +82,40 @@ func (b *yangfenBusiness) Consume(ctx context.Context, uid string, amount int) e
 
 	b.checkAndClearExpired(ctx, uid)
 
-	balance, _ := b.GetBalance(ctx, uid)
-	if balance < amount {
-		return fmt.Errorf("余额不足")
+	// 使用Lua脚本实现原子消费：检查余额 -> 扣减
+	script := redis.NewScript(`
+		local key = KEYS[1]
+		local amount = tonumber(ARGV[1])
+		
+		local balance = redis.call('GET', key)
+		balance = balance and tonumber(balance) or 0
+		
+		if balance < amount then
+			return -1
+		end
+		
+		local newBalance = balance - amount
+		redis.call('SET', key, newBalance)
+		
+		return newBalance
+	`)
+
+	result, err := script.Run(ctx, webcache.RedisClient.Client, []string{b.getBalanceKey(uid)}, amount).Result()
+	if err != nil {
+		return err
 	}
 
-	newBalance := balance - amount
-	webcache.RedisClient.Set(ctx, b.getBalanceKey(uid), strconv.Itoa(newBalance), 0)
+	newBalance, ok := result.(int64)
+	if !ok {
+		if num, ok := result.(int64); ok && num == -1 {
+			return fmt.Errorf("余额不足")
+		}
+		return fmt.Errorf("消费失败")
+	}
+
+	if newBalance == -1 {
+		return fmt.Errorf("余额不足")
+	}
 
 	bonusRate := 1
 	if amount >= 100 {
@@ -95,7 +123,7 @@ func (b *yangfenBusiness) Consume(ctx context.Context, uid string, amount int) e
 	}
 	_ = bonusRate
 
-	b.addTransaction(ctx, uid, "consume", amount, newBalance, fmt.Sprintf("消费%d积分", amount))
+	b.addTransaction(ctx, uid, "consume", amount, int(newBalance), fmt.Sprintf("消费%d积分", amount))
 	return nil
 }
 
@@ -110,17 +138,51 @@ func (b *yangfenBusiness) Transfer(ctx context.Context, fromUid, toUid string, a
 	b.checkAndClearExpired(ctx, fromUid)
 	b.checkAndClearExpired(ctx, toUid)
 
-	fromBalance, _ := b.GetBalance(ctx, fromUid)
-	if fromBalance < amount {
-		return fmt.Errorf("余额不足")
+	// 使用Lua脚本实现原子转账：检查余额 -> 扣减转出账户 -> 增加转入账户
+	script := redis.NewScript(`
+		local fromKey = KEYS[1]
+		local toKey = KEYS[2]
+		local amount = tonumber(ARGV[1])
+		
+		-- 获取转出账户余额
+		local fromBalance = redis.call('GET', fromKey)
+		fromBalance = fromBalance and tonumber(fromBalance) or 0
+		
+		-- 检查余额是否足够
+		if fromBalance < amount then
+			return -1  -- 余额不足
+		end
+		
+		-- 扣减转出账户
+		redis.call('DECRBY', fromKey, amount)
+		
+		-- 增加转入账户
+		local toBalance = redis.call('GET', toKey)
+		toBalance = toBalance and tonumber(toBalance) or 0
+		redis.call('SET', toKey, toBalance + amount)
+		
+		-- 返回新的余额
+		return {fromBalance - amount, toBalance + amount}
+	`)
+
+	keys := []string{b.getBalanceKey(fromUid), b.getBalanceKey(toUid)}
+	result, err := script.Run(ctx, webcache.RedisClient.Client, keys, amount).Result()
+	if err != nil {
+		return err
 	}
 
-	newFromBalance := fromBalance - amount
-	webcache.RedisClient.Set(ctx, b.getBalanceKey(fromUid), strconv.Itoa(newFromBalance), 0)
+	// 解析返回结果
+	balances, ok := result.([]interface{})
+	if !ok {
+		// 返回-1表示余额不足
+		if num, ok := result.(int64); ok && num == -1 {
+			return fmt.Errorf("余额不足")
+		}
+		return fmt.Errorf("转账失败")
+	}
 
-	toBalance, _ := b.GetBalance(ctx, toUid)
-	newToBalance := toBalance + amount
-	webcache.RedisClient.Set(ctx, b.getBalanceKey(toUid), strconv.Itoa(newToBalance), 0)
+	newFromBalance, _ := strconv.Atoi(fmt.Sprint(balances[0]))
+	newToBalance, _ := strconv.Atoi(fmt.Sprint(balances[1]))
 
 	b.addTransaction(ctx, fromUid, "transfer_out", amount, newFromBalance, fmt.Sprintf("转出给%s", toUid))
 	b.addTransaction(ctx, toUid, "transfer_in", amount, newToBalance, fmt.Sprintf("从%s转入", fromUid))
