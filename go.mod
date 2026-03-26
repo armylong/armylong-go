@@ -3,7 +3,7 @@ module github.com/armylong/armylong-go
 go 1.24.0
 
 require (
-	github.com/armylong/go-library v0.0.0-20260325151407-ead148f78bc2
+	github.com/armylong/go-library v0.0.0-20260326060737-fe3606674669
 	github.com/spf13/cast v1.10.0
 	github.com/spf13/cobra v1.10.2
 )
@@ -42,4 +42,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/armylong/go-library => /root/code/stepBYstep/goCode/go-library
