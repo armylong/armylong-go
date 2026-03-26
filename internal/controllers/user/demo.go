@@ -7,7 +7,11 @@ import (
 type DemoController struct {
 }
 
-func (u *DemoController) ActionHello(c *gin.Context) (res string, err error) {
+type response struct {
+	Message string `json:"message"`
+}
 
-	return "Hello, World!", nil
+func (u *DemoController) ActionHello(c *gin.Context) (res response, err error) {
+	res = response{Message: "Hello, World!"}
+	return res, nil
 }
