@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/armylong/armylong-go/internal/business"
 	userCs "github.com/armylong/armylong-go/internal/cs/user"
 	"github.com/gin-gonic/gin"
 )
@@ -8,7 +9,13 @@ import (
 type DemoController struct {
 }
 
-func (u *DemoController) ActionHello(c *gin.Context) (res userCs.DemoResponse, err error) {
-	res = userCs.DemoResponse{Message: "Hello, World!"}
-	return res, nil
+func (c *DemoController) ActionHello(ctx *gin.Context) (res *userCs.DemoResponse, err error) {
+	message, err := business.DemoBusiness.GetMessage(ctx)
+	if err != nil || message == "" {
+		return res, err
+	}
+
+	return &userCs.DemoResponse{
+		Message: message,
+	}, nil
 }
