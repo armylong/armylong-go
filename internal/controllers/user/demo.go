@@ -1,17 +1,14 @@
 package user
 
 import (
+	userCs "github.com/armylong/armylong-go/internal/cs/user"
 	"github.com/gin-gonic/gin"
 )
 
 type DemoController struct {
 }
 
-type response struct {
-	Message string `json:"message"`
-}
-
-func (u *DemoController) ActionHello(c *gin.Context) (res response, err error) {
-	res = response{Message: "Hello, World!"}
+func (u *DemoController) ActionHello(c *gin.Context) (res userCs.DemoResponse, err error) {
+	res = userCs.DemoResponse{Message: "Hello, World!"}
 	return res, nil
 }
