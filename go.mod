@@ -42,3 +42,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
+replace (
+	github.com/armylong/go-library => /root/code/stepBYstep/goCode/go-library
+)

@@ -3,8 +3,8 @@ package yangfen
 import (
 	"errors"
 
-	"github.com/armylong/armylong-go/internal/business"
-	"github.com/armylong/armylong-go/internal/cs/yangfen"
+	yangfenBusiness "github.com/armylong/armylong-go/internal/business/yangfen"
+	yangfenCs "github.com/armylong/armylong-go/internal/cs/yangfen"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,23 +18,23 @@ func (c *YangfenController) checkUid(uid string) error {
 	return nil
 }
 
-func (c *YangfenController) ActionGetBalance(ctx *gin.Context, req *yangfen.BaseRequest) (*yangfen.BalanceResponse, error) {
+func (c *YangfenController) ActionGetBalance(ctx *gin.Context, req *yangfenCs.BaseRequest) (*yangfenCs.BalanceResponse, error) {
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
 
-	balance, err := business.YangfenBusiness.GetBalance(ctx, req.Uid)
+	balance, err := yangfenBusiness.YangfenBusiness.GetBalance(ctx, req.Uid)
 	if err != nil {
 		return nil, err
 	}
 
-	return &yangfen.BalanceResponse{
+	return &yangfenCs.BalanceResponse{
 		Uid:     req.Uid,
 		Balance: balance,
 	}, nil
 }
 
-func (c *YangfenController) ActionRecharge(ctx *gin.Context, req *yangfen.RechargeRequest) (*yangfen.BalanceResponse, error) {
+func (c *YangfenController) ActionRecharge(ctx *gin.Context, req *yangfenCs.RechargeRequest) (*yangfenCs.BalanceResponse, error) {
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -43,20 +43,20 @@ func (c *YangfenController) ActionRecharge(ctx *gin.Context, req *yangfen.Rechar
 		return nil, errors.New("充值金额必须大于0")
 	}
 
-	err := business.YangfenBusiness.Recharge(ctx, req.Uid, req.Amount, req.ExpireSec)
+	err := yangfenBusiness.YangfenBusiness.Recharge(ctx, req.Uid, req.Amount, req.ExpireSec)
 	if err != nil {
 		return nil, err
 	}
 
-	balance, _ := business.YangfenBusiness.GetBalance(ctx, req.Uid)
+	balance, _ := yangfenBusiness.YangfenBusiness.GetBalance(ctx, req.Uid)
 
-	return &yangfen.BalanceResponse{
+	return &yangfenCs.BalanceResponse{
 		Uid:     req.Uid,
 		Balance: balance,
 	}, nil
 }
 
-func (c *YangfenController) ActionConsume(ctx *gin.Context, req *yangfen.ConsumeRequest) (*yangfen.BalanceResponse, error) {
+func (c *YangfenController) ActionConsume(ctx *gin.Context, req *yangfenCs.ConsumeRequest) (*yangfenCs.BalanceResponse, error) {
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -65,20 +65,20 @@ func (c *YangfenController) ActionConsume(ctx *gin.Context, req *yangfen.Consume
 		return nil, errors.New("消费金额必须大于0")
 	}
 
-	err := business.YangfenBusiness.Consume(ctx, req.Uid, req.Amount)
+	err := yangfenBusiness.YangfenBusiness.Consume(ctx, req.Uid, req.Amount)
 	if err != nil {
 		return nil, err
 	}
 
-	balance, _ := business.YangfenBusiness.GetBalance(ctx, req.Uid)
+	balance, _ := yangfenBusiness.YangfenBusiness.GetBalance(ctx, req.Uid)
 
-	return &yangfen.BalanceResponse{
+	return &yangfenCs.BalanceResponse{
 		Uid:     req.Uid,
 		Balance: balance,
 	}, nil
 }
 
-func (c *YangfenController) ActionTransfer(ctx *gin.Context, req *yangfen.TransferRequest) (*yangfen.CommonResponse, error) {
+func (c *YangfenController) ActionTransfer(ctx *gin.Context, req *yangfenCs.TransferRequest) (*yangfenCs.CommonResponse, error) {
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -91,15 +91,15 @@ func (c *YangfenController) ActionTransfer(ctx *gin.Context, req *yangfen.Transf
 		return nil, errors.New("转账金额必须大于0")
 	}
 
-	err := business.YangfenBusiness.Transfer(ctx, req.Uid, req.ToUid, req.Amount)
+	err := yangfenBusiness.YangfenBusiness.Transfer(ctx, req.Uid, req.ToUid, req.Amount)
 	if err != nil {
 		return nil, err
 	}
 
-	fromBalance, _ := business.YangfenBusiness.GetBalance(ctx, req.Uid)
-	toBalance, _ := business.YangfenBusiness.GetBalance(ctx, req.ToUid)
+	fromBalance, _ := yangfenBusiness.YangfenBusiness.GetBalance(ctx, req.Uid)
+	toBalance, _ := yangfenBusiness.YangfenBusiness.GetBalance(ctx, req.ToUid)
 
-	return &yangfen.CommonResponse{
+	return &yangfenCs.CommonResponse{
 		Success: true,
 		Message: "转账成功",
 		Data: map[string]any{
@@ -111,7 +111,7 @@ func (c *YangfenController) ActionTransfer(ctx *gin.Context, req *yangfen.Transf
 	}, nil
 }
 
-func (c *YangfenController) ActionRefund(ctx *gin.Context, req *yangfen.RefundRequest) (*yangfen.BalanceResponse, error) {
+func (c *YangfenController) ActionRefund(ctx *gin.Context, req *yangfenCs.RefundRequest) (*yangfenCs.BalanceResponse, error) {
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -120,39 +120,39 @@ func (c *YangfenController) ActionRefund(ctx *gin.Context, req *yangfen.RefundRe
 		return nil, errors.New("交易号不能为空")
 	}
 
-	err := business.YangfenBusiness.Refund(ctx, req.Uid, req.TransactionId)
+	err := yangfenBusiness.YangfenBusiness.Refund(ctx, req.Uid, req.TransactionId)
 	if err != nil {
 		return nil, err
 	}
 
-	balance, _ := business.YangfenBusiness.GetBalance(ctx, req.Uid)
+	balance, _ := yangfenBusiness.YangfenBusiness.GetBalance(ctx, req.Uid)
 
-	return &yangfen.BalanceResponse{
+	return &yangfenCs.BalanceResponse{
 		Uid:     req.Uid,
 		Balance: balance,
 	}, nil
 }
 
-func (c *YangfenController) ActionGetTransactions(ctx *gin.Context, req *yangfen.BaseRequest) (*yangfen.TransactionListResponse, error) {
+func (c *YangfenController) ActionGetTransactions(ctx *gin.Context, req *yangfenCs.BaseRequest) (*yangfenCs.TransactionListResponse, error) {
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
 
-	transactions, err := business.YangfenBusiness.GetTransactions(ctx, req.Uid)
+	transactions, err := yangfenBusiness.YangfenBusiness.GetTransactions(ctx, req.Uid)
 	if err != nil {
 		return nil, err
 	}
 
-	return &yangfen.TransactionListResponse{
+	return &yangfenCs.TransactionListResponse{
 		List:  convertTransactions(transactions),
 		Total: len(transactions),
 	}, nil
 }
 
-func convertTransactions(transactions []map[string]any) []yangfen.TransactionRecord {
-	result := make([]yangfen.TransactionRecord, 0, len(transactions))
+func convertTransactions(transactions []map[string]any) []yangfenCs.TransactionRecord {
+	result := make([]yangfenCs.TransactionRecord, 0, len(transactions))
 	for _, t := range transactions {
-		record := yangfen.TransactionRecord{}
+		record := yangfenCs.TransactionRecord{}
 		if id, ok := t["id"].(string); ok {
 			record.Id = id
 		}
@@ -179,17 +179,17 @@ func convertTransactions(transactions []map[string]any) []yangfen.TransactionRec
 	return result
 }
 
-func (c *YangfenController) ActionClearData(ctx *gin.Context, req *yangfen.BaseRequest) (*yangfen.CommonResponse, error) {
+func (c *YangfenController) ActionClearData(ctx *gin.Context, req *yangfenCs.BaseRequest) (*yangfenCs.CommonResponse, error) {
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
 
-	err := business.YangfenBusiness.ClearData(ctx, req.Uid)
+	err := yangfenBusiness.YangfenBusiness.ClearData(ctx, req.Uid)
 	if err != nil {
 		return nil, err
 	}
 
-	return &yangfen.CommonResponse{
+	return &yangfenCs.CommonResponse{
 		Success: true,
 		Message: "清除成功",
 	}, nil

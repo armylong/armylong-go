@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/armylong/armylong-go/internal/business"
+	demoBiz "github.com/armylong/armylong-go/internal/business/demo"
 	userCs "github.com/armylong/armylong-go/internal/cs/user"
 	"github.com/gin-gonic/gin"
 )
@@ -10,7 +10,7 @@ type DemoController struct {
 }
 
 func (c *DemoController) ActionHello(ctx *gin.Context) (res *userCs.DemoMessage, err error) {
-	message, err := business.DemoBusiness.GetMessage(ctx)
+	message, err := demoBiz.DemoBusiness.GetMessage(ctx)
 	if err != nil || message == "" {
 		return res, err
 	}
@@ -21,7 +21,7 @@ func (c *DemoController) ActionHello(ctx *gin.Context) (res *userCs.DemoMessage,
 }
 
 func (c *DemoController) ActionSetHello(ctx *gin.Context, request *userCs.DemoMessage) (res *userCs.DemoMessage, err error) {
-	message, err := business.DemoBusiness.SetMessage(ctx, request.Message)
+	message, err := demoBiz.DemoBusiness.SetMessage(ctx, request.Message)
 	if err != nil || message == "" {
 		return res, err
 	}
