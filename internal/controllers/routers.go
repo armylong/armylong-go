@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/armylong/armylong-go/internal/controllers/feishu"
 	"github.com/armylong/armylong-go/internal/controllers/user"
 	"github.com/armylong/armylong-go/internal/controllers/yangfen"
 
@@ -28,5 +29,8 @@ func RegisterRouters(engine *gin.Engine) {
 
 	yangfenRoot := engine.Group("/yangfen")
 	longgin.RegisterJsonController(yangfenRoot, &yangfen.YangfenController{})
+
+	feishuRoot := engine.Group("/feishu")
+	longgin.RegisterJsonController(feishuRoot, &feishu.FeishuCloudDocController{})
 
 }
