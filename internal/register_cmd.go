@@ -27,4 +27,16 @@ func RegisterCmd(command command.BaseCommand) {
 	todoCmd.Flags().StringP("expire_at", "", "", "过期时间，格式：2006-01-02 15:04:05（可选）")
 	command.AddCliCommand(todoCmd)
 
+	// -----------------------------------------------------------------------------------------------------------------
+	yangfenCmd := &cobra.Command{
+		Use:   "yangfen [action]",
+		Short: "氧分管理",
+		Run:   cmd.YangfenHandler,
+	}
+	yangfenCmd.Flags().StringP("uid", "", "", "用户ID")
+	yangfenCmd.Flags().IntP("amount", "", 0, "金额")
+	yangfenCmd.Flags().StringP("to-uid", "", "", "转账目标用户ID")
+	yangfenCmd.Flags().Int64P("expire-sec", "", 0, "过期时间（秒）")
+	yangfenCmd.Flags().StringP("transaction-id", "", "", "交易ID")
+	command.AddCliCommand(yangfenCmd)
 }

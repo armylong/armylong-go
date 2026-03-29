@@ -34,6 +34,7 @@ func (b *yangfenBusiness) getExpireKey(uid string) string {
 }
 
 func (b *yangfenBusiness) GetBalance(ctx context.Context, uid string) (int, error) {
+	// 查询余额
 	balanceStr, err := webcache.RedisClient.Get(ctx, b.getBalanceKey(uid)).Result()
 	if err != nil {
 		return 0, nil
@@ -57,6 +58,7 @@ func (b *yangfenBusiness) checkAndClearExpired(ctx context.Context, uid string) 
 }
 
 func (b *yangfenBusiness) Recharge(ctx context.Context, uid string, amount int, expireSec int64) error {
+	// 充值
 	if amount <= 0 {
 		return fmt.Errorf("充值金额必须大于0")
 	}
@@ -76,6 +78,7 @@ func (b *yangfenBusiness) Recharge(ctx context.Context, uid string, amount int, 
 }
 
 func (b *yangfenBusiness) Consume(ctx context.Context, uid string, amount int) error {
+	// 消费
 	if amount <= 0 {
 		return fmt.Errorf("消费金额必须大于0")
 	}
@@ -128,6 +131,7 @@ func (b *yangfenBusiness) Consume(ctx context.Context, uid string, amount int) e
 }
 
 func (b *yangfenBusiness) Transfer(ctx context.Context, fromUid, toUid string, amount int) error {
+	// 转账
 	if amount <= 0 {
 		return fmt.Errorf("转账金额必须大于0")
 	}
@@ -190,6 +194,7 @@ func (b *yangfenBusiness) Transfer(ctx context.Context, fromUid, toUid string, a
 }
 
 func (b *yangfenBusiness) Refund(ctx context.Context, uid string, transactionId string) error {
+	// 退款
 	transaction, err := b.getTransaction(ctx, uid, transactionId)
 	if err != nil {
 		return fmt.Errorf("交易记录不存在")
@@ -211,6 +216,7 @@ func (b *yangfenBusiness) Refund(ctx context.Context, uid string, transactionId 
 }
 
 func (b *yangfenBusiness) GetTransactions(ctx context.Context, uid string) ([]map[string]any, error) {
+	// 查看交易记录
 	key := b.getTransactionKey(uid)
 	data, err := webcache.RedisClient.LRange(ctx, key, 0, -1).Result()
 	if err != nil {
@@ -254,6 +260,7 @@ func (b *yangfenBusiness) getTransaction(ctx context.Context, uid string, transa
 }
 
 func (b *yangfenBusiness) ClearData(ctx context.Context, uid string) error {
+	// 清除数据
 	webcache.RedisClient.Del(ctx, b.getBalanceKey(uid))
 	webcache.RedisClient.Del(ctx, b.getTransactionKey(uid))
 	webcache.RedisClient.Del(ctx, b.getExpireKey(uid))

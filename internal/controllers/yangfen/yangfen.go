@@ -19,6 +19,7 @@ func (c *YangfenController) checkUid(uid string) error {
 }
 
 func (c *YangfenController) ActionGetBalance(ctx *gin.Context, req *yangfenCs.BaseRequest) (*yangfenCs.BalanceResponse, error) {
+	// 查询余额
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -35,6 +36,7 @@ func (c *YangfenController) ActionGetBalance(ctx *gin.Context, req *yangfenCs.Ba
 }
 
 func (c *YangfenController) ActionRecharge(ctx *gin.Context, req *yangfenCs.RechargeRequest) (*yangfenCs.BalanceResponse, error) {
+	// 充值
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -57,6 +59,7 @@ func (c *YangfenController) ActionRecharge(ctx *gin.Context, req *yangfenCs.Rech
 }
 
 func (c *YangfenController) ActionConsume(ctx *gin.Context, req *yangfenCs.ConsumeRequest) (*yangfenCs.BalanceResponse, error) {
+	// 消费
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -79,6 +82,7 @@ func (c *YangfenController) ActionConsume(ctx *gin.Context, req *yangfenCs.Consu
 }
 
 func (c *YangfenController) ActionTransfer(ctx *gin.Context, req *yangfenCs.TransferRequest) (*yangfenCs.CommonResponse, error) {
+	// 转账
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -112,6 +116,7 @@ func (c *YangfenController) ActionTransfer(ctx *gin.Context, req *yangfenCs.Tran
 }
 
 func (c *YangfenController) ActionRefund(ctx *gin.Context, req *yangfenCs.RefundRequest) (*yangfenCs.BalanceResponse, error) {
+	// 退款
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -134,6 +139,7 @@ func (c *YangfenController) ActionRefund(ctx *gin.Context, req *yangfenCs.Refund
 }
 
 func (c *YangfenController) ActionGetTransactions(ctx *gin.Context, req *yangfenCs.BaseRequest) (*yangfenCs.TransactionListResponse, error) {
+	// 查看交易记录
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
@@ -180,6 +186,7 @@ func convertTransactions(transactions []map[string]any) []yangfenCs.TransactionR
 }
 
 func (c *YangfenController) ActionClearData(ctx *gin.Context, req *yangfenCs.BaseRequest) (*yangfenCs.CommonResponse, error) {
+	// 清除数据
 	if err := c.checkUid(req.Uid); err != nil {
 		return nil, err
 	}
