@@ -9,6 +9,6 @@ import (
 
 type FeishuCloudDocController struct{}
 
-func (c *FeishuCloudDocController) GetBaseTables(ctx context.Context, req *cloudDocCs.GetBaseTablesRequest) (*cloudDocCs.BaseTablesUrlResponse, error) {
+func (c *FeishuCloudDocController) ActionGetBaseTables(ctx context.Context, req *cloudDocCs.GetBaseTablesRequest) (*cloudDocCs.BaseTablesUrlResponse, error) {
 	return feishuBusiness.BaseTablesBusiness.GetBaseTables(ctx, req)
 }

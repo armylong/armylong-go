@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/url"
 
 	"github.com/armylong/armylong-go/internal/common/config"
@@ -53,8 +52,6 @@ func (b *baseTablesBusiness) GetBaseTables(ctx context.Context, req *cloudDocCs.
 	}
 
 	// 处理响应
-	urlResponseStr := string(urlResponseByte)
-	log.Println(urlResponseStr)
 	urlResponse := &cloudDocCs.BaseTablesUrlResponse{}
 	err = json.Unmarshal(urlResponseByte, &urlResponse)
 	if err != nil {
