@@ -1,4 +1,4 @@
-package business
+package demo
 
 import (
 	"context"
@@ -11,16 +11,16 @@ type demoBusiness struct{}
 
 var DemoBusiness = &demoBusiness{}
 
-func (b *demoBusiness) GetMessage(ctx context.Context) (res string, err error) {
-	res, err = webcache.RedisClient.Get(ctx, config.DemoMessageCacheKey).Result()
+func (b *demoBusiness) SetMessage(ctx context.Context, message string) (res string, err error) {
+	res, err = webcache.RedisClient.Set(ctx, config.DemoMessageCacheKey, message, 0).Result()
 	if err != nil {
 		return "", err
 	}
 	return res, nil
 }
 
-func (b *demoBusiness) SetMessage(ctx context.Context, message string) (res string, err error) {
-	res, err = webcache.RedisClient.Set(ctx, config.DemoMessageCacheKey, message, 0).Result()
+func (b *demoBusiness) GetMessage(ctx context.Context) (res string, err error) {
+	res, err = webcache.RedisClient.Get(ctx, config.DemoMessageCacheKey).Result()
 	if err != nil {
 		return "", err
 	}

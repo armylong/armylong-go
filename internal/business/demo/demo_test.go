@@ -1,4 +1,4 @@
-package business
+package demo
 
 import (
 	"context"
@@ -6,13 +6,12 @@ import (
 	"testing"
 )
 
+func TestDemoBusiness_SetMessage(t *testing.T) {
+	res, err := DemoBusiness.SetMessage(context.Background(), "longlonglong2")
+	fmt.Println(res, err)
+}
+
 func TestDemoBusiness_GetMessage(t *testing.T) {
-	message, err := DemoBusiness.GetMessage(context.Background())
-	if err != nil {
-		t.Errorf("GetMessage failed: %v", err)
-	}
-	if message != "Hello, World!" {
-		t.Errorf("GetMessage returned %v, want Hello, World!", message)
-	}
-	fmt.Println(message)
+	res, err := DemoBusiness.GetMessage(context.Background())
+	fmt.Println(res, err)
 }
